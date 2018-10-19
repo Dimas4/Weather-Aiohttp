@@ -1,6 +1,7 @@
 import aiohttp_jinja2
 
 from exceptions.service.exceptions import WrongLocationError
+from exceptions.model.exceptions import ModelRequestError
 from backend.get_config import get_config
 from aiohttp.web import json_response
 from service.service import Service
@@ -24,7 +25,7 @@ class View(web.View):
         location = (await self.request.post()).get('location')
         try:
             response = service.validate_query(location)
-        except WrongLocationError:
+        except (WrongLocationError, ModelRequestError):
             return json_response({'error': 'Wrong Location'})
 
         return json_response({'answer': {
