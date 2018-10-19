@@ -1,0 +1,3 @@
+weather:
+  url: http://api.openweathermap.org/data/2.5/weather
+  token: 88be56067214c953b2e277c0948327d1

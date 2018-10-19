@@ -1,10 +1,15 @@
 import aiohttp_jinja2
-import requests
 
+from exceptions.service.exceptions import WrongLocationError
+from backend.get_config import get_config
 from aiohttp.web import json_response
+from service.service import Service
 from aiohttp import web
 
 
+config = get_config()
+
+service = Service(config)
 routes = web.RouteTableDef()
 
 
@@ -12,22 +17,16 @@ routes = web.RouteTableDef()
 class View(web.View):
     @aiohttp_jinja2.template('home/index.html')
     async def get(self):
-        return {'s': 'sa'}
+        return {'': ''}
 
     @aiohttp_jinja2.template('home/index.html')
     async def post(self):
         location = (await self.request.post()).get('location')
-        print(location)
-        if not location:
-            return json_response({'error': 'Wrong location'})
+        try:
+            response = service.validate_query(location)
+        except WrongLocationError:
+            return json_response({'error': 'Wrong Location'})
 
-        location = location.lower()
-        token = "88be56067214c953b2e277c0948327d1"
-        res = requests.get("http://api.openweathermap.org/data/2.5/weather",
-                           params={'q': location, 'units': 'metric', 'lang': 'ru', 'appid': token}).json()
-        if res['cod'] != 200:
-            return json_response({'error': 'Wrong location'})
-        res = res['main']
         return json_response({'answer': {
-            'temp': res['temp'], 'humidity': res['humidity'], 'pressure': res['pressure']
+            'temp': response['temp'], 'humidity': response['humidity'], 'pressure': response['pressure']
         }})

@@ -1,0 +1,2 @@
+class WrongLocationError(Exception):
+    pass

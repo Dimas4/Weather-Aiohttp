@@ -1,14 +1,10 @@
-import aiohttp_jinja2
-import jinja2
-
 from aiohttp import web
 
-from routers.routers import routes
+from routers.add_routers import add_routers
+from backend.create_app import create_app
 
 
-app = web.Application()
-app.add_routes(routes)
-aiohttp_jinja2.setup(app, loader=jinja2.FileSystemLoader('templates'))
-app['static_root_url'] = '/static'
-app.router.add_static('/static', 'static', name='static')
-web.run_app(app)
+if __name__ == "__main__":
+    app = create_app()
+    add_routers(app)
+    web.run_app(app)
