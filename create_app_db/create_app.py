@@ -1,11 +1,13 @@
 import aiohttp_jinja2
 import jinja2
 
+from miiddlewares.middlewares import middleware
+
 from aiohttp import web
 
 
 def create_app():
-    app = web.Application()
+    app = web.Application(middlewares=[middleware])
 
     aiohttp_jinja2.setup(app, loader=jinja2.FileSystemLoader('templates'))
     app['static_root_url'] = '/static'

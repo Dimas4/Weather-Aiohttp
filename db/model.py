@@ -1,11 +1,11 @@
-from backend.db.db import weather as weather_model, location as location_model
-from backend.create_db import create_db
+from db.db import weather as weather_model, location as location_model
+from create_app_db.create_db import create_db
 
 
 class Db:
     def __init__(self, config):
-        self.engine = create_db(config['postgres'])
-        self.config = config
+        self.engine = create_db(config['database']['postgres'])
+        self.config = config['database']
 
     async def insert_to_location(self, location):
         async with self.engine as engine:
@@ -25,4 +25,5 @@ class Db:
                 last = list(await conn.execute(location_model.select()
                                                .where(location_model.c.location_name == location)))[-1]
                 self.engine = create_db(self.config['postgres'])
+
                 return last

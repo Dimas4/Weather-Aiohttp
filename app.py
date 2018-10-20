@@ -1,7 +1,7 @@
 from aiohttp import web
 
 from routers.add_routers import add_routers
-from backend.create_app import create_app
+from create_app_db.create_app import create_app
 
 
 if __name__ == "__main__":

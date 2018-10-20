@@ -1,0 +1,6 @@
+postgres:
+  database: admindb
+  user: admin
+  password: adminadmin
+  host: localhost
+  port: 5432

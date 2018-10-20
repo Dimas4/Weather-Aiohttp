@@ -1,6 +1,6 @@
 from exceptions.service.exceptions import WrongLocationError
-from backend.model.model import Weather
-from backend.db.model import Db
+from model.model import Weather
+from db.model import Db
 
 
 class Service:
