@@ -10,8 +10,9 @@ from aiohttp import web
 
 config = get_config()
 
-service = Service(config)
 routes = web.RouteTableDef()
+
+service = Service(config)
 
 
 @routes.view("/")
@@ -24,10 +25,10 @@ class View(web.View):
     async def post(self):
         location = (await self.request.post()).get('location')
         try:
-            response = service.validate_query(location)
+            temp, humidity, pressure = await service.validate_query(location)
         except (WrongLocationError, ModelRequestError):
             return json_response({'error': 'Wrong Location'})
 
         return json_response({'answer': {
-            'temp': response['temp'], 'humidity': response['humidity'], 'pressure': response['pressure']
+            'temp': temp, 'humidity': humidity, 'pressure': pressure
         }})

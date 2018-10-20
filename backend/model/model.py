@@ -1,4 +1,4 @@
-import requests
+import aiohttp
 
 
 class Weather:
@@ -6,5 +6,9 @@ class Weather:
         self.url = config['weather']['url']
         self.token = config['weather']['token']
 
-    def get_weather(self, location):
-        return requests.get(self.url, params={'q': location, 'units': 'metric', 'appid': self.token}).json()
+    async def get_weather(self, location):
+        async with aiohttp.ClientSession() as session:
+
+            async with session.get(self.url, params={'q': location, 'units': 'metric', 'appid': self.token}) as resp:
+
+                return await resp.json()
