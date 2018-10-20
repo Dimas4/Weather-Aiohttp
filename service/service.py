@@ -1,15 +1,13 @@
-from backend.db.db import weather as weather_model, location as location_model
 from exceptions.service.exceptions import WrongLocationError
 from backend.model.model import Weather
-from backend.create_db import create_db
+from backend.db.model import Db
 
 
 class Service:
     def __init__(self, config):
         self.config = config
-
+        self.db = Db(config)
         self.weather = Weather(config)
-        self.engine = create_db(config['postgres'])
 
     async def validate_query(self, location):
         if not location:
@@ -23,17 +21,8 @@ class Service:
         temp = data['main']['temp']
         humidity = data['main']['humidity']
         pressure = data['main']['pressure']
-
-        async with self.engine as engine:
-            async with engine.acquire() as conn:
-                await conn.execute(location_model.insert().values(location_name=location))
-
-                last = list(await conn.execute(location_model.select()
-                                               .where(location_model.c.location_name == location)))[-1]
-                await conn.execute(weather_model.insert().values(temp=temp, humidity=humidity,
-                                                                 pressure=pressure, location_id=last.id))
-
-        self.engine = create_db(self.config['postgres'])
+        await self.db.insert_to_location(location)
+        last = await self.db.get_last_location(location)
+        await self.db.insert_to_weather(temp=temp, humidity=humidity, pressure=pressure, location_id=last.id)
 
         return temp, humidity, pressure
-
